@@ -1,5 +1,6 @@
 use crate::{
     Result,
+    ctx::Ctx,
     model::{CreateTicketDto, Ticket, TicketController},
 };
 use axum::{
@@ -23,17 +24,21 @@ pub fn routes(tc: TicketController) -> Router {
 }
 
 async fn create_ticket(
+    ctx: Ctx,
     State(tc): State<TicketController>,
     Json(dto): Json<CreateTicketDto>,
 ) -> Result<Json<Ticket>> {
     println!("Request to Create ticket Handler");
 
-    let ticket = tc.create_ticket(dto).await?;
+    let ticket = tc.create_ticket(ctx, dto).await?;
 
     Ok(Json(ticket))
 }
 
-async fn find_all_tickets(State(tc): State<TicketController>) -> Result<Json<Vec<Ticket>>> {
+async fn find_all_tickets(
+    ctx: Ctx,
+    State(tc): State<TicketController>,
+) -> Result<Json<Vec<Ticket>>> {
     println!("Request to Find all tickets Handler");
     let tickets = tc.find_all_tickets().await?;
 
@@ -41,6 +46,7 @@ async fn find_all_tickets(State(tc): State<TicketController>) -> Result<Json<Vec
 }
 
 async fn delete_ticket(
+    ctx: Ctx,
     State(tc): State<TicketController>,
     Path(id): Path<u64>,
 ) -> Result<Json<Ticket>> {

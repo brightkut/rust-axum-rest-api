@@ -2,12 +2,13 @@ use std::sync::{Arc, Mutex};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Error, Result};
+use crate::{Error, Result, ctx::Ctx};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Ticket {
     pub id: u64,
     pub title: String,
+    pub cid: u64,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -27,7 +28,7 @@ impl TicketController {
         })
     }
 
-    pub async fn create_ticket(&self, dto: CreateTicketDto) -> Result<Ticket> {
+    pub async fn create_ticket(&self, ctx: Ctx, dto: CreateTicketDto) -> Result<Ticket> {
         let mut store = self.ticket_store.lock().unwrap();
 
         let id = store.len() as u64;
@@ -35,6 +36,7 @@ impl TicketController {
         let ticket = Ticket {
             id,
             title: dto.title,
+            cid: ctx.user_id(),
         };
 
         store.push(Some(ticket.clone()));

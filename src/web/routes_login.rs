@@ -22,8 +22,7 @@ async fn api_login(cookies: Cookies, payload: Json<LoginDto>) -> Result<Json<Val
         return Err(Error::LoginFail);
     }
 
-    // FIXME:   Implement real access token logic
-    cookies.add(Cookie::new(ACCESS_TOKEN, "user-1.exp.sign"));
+    cookies.add(Cookie::new(ACCESS_TOKEN, "token-12345"));
 
     let body = Json(json!({
         "message": "Login success"

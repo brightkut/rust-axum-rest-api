@@ -16,6 +16,7 @@ use crate::{model::TicketController, web::routes_login::routes};
 
 pub use self::error::{Error, Result};
 
+mod ctx;
 mod error;
 mod model;
 mod web;
@@ -36,6 +37,10 @@ async fn main() -> Result<()> {
         .layer(middleware::map_request(main_request_middleware))
         .layer(middleware::map_response(main_response_middleware))
         .layer(CookieManagerLayer::new())
+        .layer(middleware::from_fn_with_state(
+            tc.clone(),
+            web::middleware_auth::mw_ctx_resolver,
+        ))
         // this fallback_service use when no route to go it will go to this function
         .fallback_service(routes_static());
 
@@ -52,8 +57,6 @@ async fn main() -> Result<()> {
 
 async fn main_request_middleware<T>(req: Request<T>) -> Request<T> {
     println!("Main request middleware");
-    println!();
-
     req
 }
 

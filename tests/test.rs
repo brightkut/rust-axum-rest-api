@@ -16,7 +16,7 @@ async fn routes_tests() -> Result<()> {
 
     // Test no routes handler
     // let _ = http_client.do_get("/src/main.rs").await?.print().await;
-    //
+
     // Test login handler
     let req_login = http_client.do_post(
         "/api/login",
